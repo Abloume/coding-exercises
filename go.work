@@ -3,4 +3,5 @@ go 1.27.1
 use (
 	./01-path-simplify
 	./02-generate-parentheses
+	./03-zuma-game
 )

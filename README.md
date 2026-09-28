@@ -8,6 +8,7 @@
 |---|---|---|
 | 01 | 路径简化 | [01-path-simplify](./01-path-simplify) |
 | 02 | 括号生成 | [02-generate-parentheses](./02-generate-parentheses) |
+| 03 | 祖玛消消乐 | [03-zuma-game](./03-zuma-game) |
 
 ## 说明
 
