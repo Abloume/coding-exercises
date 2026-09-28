@@ -11,3 +11,23 @@
 ## 说明
 
 每个练习为独立 Go module，含题目说明（README.md）、解法（solution.go）与测试（solution_test.go）。
+根目录的 `go.work` 将各练习模块纳入同一个 Go workspace，可跨目录共享依赖解析。
+
+## 运行测试
+
+**只测某个练习**（以 01 为例）：
+
+```bash
+cd 01-path-simplify && go test -v ./...
+# 或从根目录
+go test -v ./01-path-simplify/...
+```
+
+**测全部练习**（在项目根目录）：
+
+```bash
+for d in */; do (cd "$d" && go test ./...); done
+```
+
+> 注：因为各练习是独立 module，根目录直接 `go test ./...` 不可用（根目录不属于任何 module），
+> 全部题目用上面的循环方式。

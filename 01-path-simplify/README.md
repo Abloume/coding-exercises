@@ -60,7 +60,23 @@
 
 ## 运行测试
 
+**只测试当前题目：**
+
 ```bash
+# 方式一：进入练习目录（此时 ./... 就是当前模块）
 cd 01-path-simplify
 go test -v ./...
+
+# 方式二：在项目根目录直接按模块路径测（依赖根目录的 go.work）
+go test -v ./01-path-simplify/...
 ```
+
+**测试全部题目**（在项目根目录）：
+
+```bash
+for d in */; do (cd "$d" && go test ./...); done
+```
+
+> 说明：每个练习是独立 Go module，根目录用 `go.work` 将它们纳入同一个 workspace。
+> 因此根目录的 `go test ./...` 会报 "directory prefix . does not contain modules"，
+> 全部题目请用上面的循环方式，或在根目录按各模块路径逐个列出。
