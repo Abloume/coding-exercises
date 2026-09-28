@@ -7,6 +7,7 @@
 | 编号 | 题目 | 目录 |
 |---|---|---|
 | 01 | 路径简化 | [01-path-simplify](./01-path-simplify) |
+| 02 | 括号生成 | [02-generate-parentheses](./02-generate-parentheses) |
 
 ## 说明
 
