@@ -43,6 +43,47 @@ func TestSimplifyPath(t *testing.T) {
 			path: "",
 			want: "",
 		},
+		// ---- 常见路径用例 ----
+		{
+			name: "home trailing slash",
+			path: "/home/",
+			want: "home",
+		},
+		{
+			name: "classic leetcode case",
+			path: "/a/./b/../../c/",
+			want: "c",
+		},
+		{
+			name: "multiple slashes and dots",
+			path: "/a//b////c/d/././..",
+			want: "a/b/c",
+		},
+		{
+			name: "root traversal",
+			path: "/../",
+			want: "",
+		},
+		{
+			name: "three dots are a normal name",
+			path: ".../a",
+			want: ".../a",
+		},
+		{
+			name: "parent then child",
+			path: "a/b/..",
+			want: "a",
+		},
+		{
+			name: "file at root",
+			path: "file.txt",
+			want: "file.txt",
+		},
+		{
+			name: "deep relative path",
+			path: "src/utils/../../lib/core/../index.ts",
+			want: "lib/index.ts",
+		},
 	}
 
 	for _, tt := range tests {
