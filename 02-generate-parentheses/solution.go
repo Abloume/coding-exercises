@@ -17,7 +17,11 @@ package genparentheses
 // 时间复杂度 O(4^n/√n)，空间复杂度 O(n)（不含结果）。
 func GenerateParenthesis(n int) []string {
 	res := make([]string, 0)
-	cur := make([]byte, 0, 2*n) // 当前路径，预分配容量
+	// cur 是当前路径，用 []byte 而不是 string：
+	//  1. 回溯需要频繁原地增删（append + 裁剪撤销），而 string 不可变，无法修改；
+	//  2. 括号只有 '(' 和 ')' 两个 ASCII 字符，1 字节足够，无需 []rune（4 字节）；
+	//  3. 结果通过 string(cur) 一次性转换，同时完成拷贝，隔离底层数组。
+	cur := make([]byte, 0, 2*n) // 预分配容量，避免反复扩容
 
 	var backtrack func(open, close int)
 	backtrack = func(open, close int) {
