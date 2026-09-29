@@ -36,11 +36,11 @@
 **已练**：
 - 03 每日温度（`stack-patterns/03-daily-temperatures`，C1 单调递减栈存下标，O(n)）
 - 04 下一个更大元素 I（`stack-patterns/04-next-greater-element-i`，C1 存值建映射 + 查询，O(n+m)）
+- 05 接雨水（`stack-patterns/05-trapping-rain-water`，C2 单调递减栈按"层"结算水量，O(n)）
 
 **待练顺序**：
-1. 接雨水 42（C2 应用）
-2. 柱状图中最大的矩形 84（C2 + 哨兵）
-3. 移掉 K 位数字 402（C3 贪心）
+1. 柱状图中最大的矩形 84（C2 + 哨兵）
+2. 移掉 K 位数字 402（C3 贪心）
 
 ### 模式 D：辅助栈 / 双栈（Helper Stack）
 **抽象**：一个栈存主体，另一个存伴随信息（最小值/下标）；或双栈正反协作模拟队列。
