@@ -5,4 +5,5 @@ use (
 	./stack-patterns/01-path-simplify
 	./stack-patterns/02-zuma-game
 	./stack-patterns/03-daily-temperatures
+	./stack-patterns/04-next-greater-element-i
 )

@@ -11,6 +11,7 @@
 | 栈 | 01 | 路径简化 | [stack-patterns/01-path-simplify](./stack-patterns/01-path-simplify) |
 | 栈 | 02 | 祖玛消消乐 | [stack-patterns/02-zuma-game](./stack-patterns/02-zuma-game) |
 | 栈 | 03 | 每日温度 | [stack-patterns/03-daily-temperatures](./stack-patterns/03-daily-temperatures) |
+| 栈 | 04 | 下一个更大元素 I | [stack-patterns/04-next-greater-element-i](./stack-patterns/04-next-greater-element-i) |
 | 回溯 | 01 | 括号生成 | [backtracking-patterns/01-generate-parentheses](./backtracking-patterns/01-generate-parentheses) |
 
 > 模式索引见 [STACK-PATTERNS.md](./STACK-PATTERNS.md)。
