@@ -1,4 +1,4 @@
-# 03 祖玛消消乐
+# 02 祖玛消消乐
 
 ## 题目
 
@@ -83,10 +83,8 @@ func Eliminate(s string) string {
 
 ```bash
 # 只测当前题目
-cd 03-zuma-game && go test -v ./...
-# 或从项目根目录
-go test -v ./03-zuma-game/...
+cd stack-patterns/02-zuma-game && go test -v ./...
 
 # 测全部题目（项目根目录）
-for d in */; do (cd "$d" && go test ./...); done
+for d in */*/; do (cd "$d" && go test ./...); done
 ```

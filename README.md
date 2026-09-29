@@ -4,11 +4,15 @@
 
 ## 练习列表
 
-| 编号 | 题目 | 目录 |
-|---|---|---|
-| 01 | 路径简化 | [01-path-simplify](./01-path-simplify) |
-| 02 | 括号生成 | [02-generate-parentheses](./02-generate-parentheses) |
-| 03 | 祖玛消消乐 | [03-zuma-game](./03-zuma-game) |
+按**模式**组织文件夹（编号 = 文件夹内递增；主模式 = 该题最优解所用的模式）：
+
+| 模式 | 编号 | 题目 | 目录 |
+|---|---|---|---|
+| 栈 | 01 | 路径简化 | [stack-patterns/01-path-simplify](./stack-patterns/01-path-simplify) |
+| 栈 | 02 | 祖玛消消乐 | [stack-patterns/02-zuma-game](./stack-patterns/02-zuma-game) |
+| 回溯 | 01 | 括号生成 | [backtracking-patterns/01-generate-parentheses](./backtracking-patterns/01-generate-parentheses) |
+
+> 模式索引见 [STACK-PATTERNS.md](./STACK-PATTERNS.md)。
 
 ## 说明
 
@@ -17,18 +21,16 @@
 
 ## 运行测试
 
-**只测某个练习**（以 01 为例）：
+**只测某个练习**：`cd` 到该练习目录再 `go test`（以 01 路径简化为准）：
 
 ```bash
-cd 01-path-simplify && go test -v ./...
-# 或从根目录
-go test -v ./01-path-simplify/...
+cd stack-patterns/01-path-simplify && go test -v ./...
 ```
 
 **测全部练习**（在项目根目录）：
 
 ```bash
-for d in */; do (cd "$d" && go test ./...); done
+for d in */*/; do (cd "$d" && go test ./...); done
 ```
 
 > 注：因为各练习是独立 module，根目录直接 `go test ./...` 不可用（根目录不属于任何 module），

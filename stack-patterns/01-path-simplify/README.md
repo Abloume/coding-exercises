@@ -63,18 +63,13 @@
 **只测试当前题目：**
 
 ```bash
-# 方式一：进入练习目录（此时 ./... 就是当前模块）
-cd 01-path-simplify
-go test -v ./...
-
-# 方式二：在项目根目录直接按模块路径测（依赖根目录的 go.work）
-go test -v ./01-path-simplify/...
+cd stack-patterns/01-path-simplify && go test -v ./...
 ```
 
 **测试全部题目**（在项目根目录）：
 
 ```bash
-for d in */; do (cd "$d" && go test ./...); done
+for d in */*/; do (cd "$d" && go test ./...); done
 ```
 
 > 说明：每个练习是独立 Go module，根目录用 `go.work` 将它们纳入同一个 workspace。

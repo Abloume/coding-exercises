@@ -1,4 +1,4 @@
-# 02 括号生成
+# 01 括号生成
 
 ## 题目
 
@@ -76,10 +76,8 @@ func GenerateParenthesis(n int) []string {
 
 ```bash
 # 只测当前题目
-cd 02-generate-parentheses && go test -v ./...
-# 或从项目根目录
-go test -v ./02-generate-parentheses/...
+cd backtracking-patterns/01-generate-parentheses && go test -v ./...
 
 # 测全部题目（项目根目录）
-for d in */; do (cd "$d" && go test ./...); done
+for d in */*/; do (cd "$d" && go test ./...); done
 ```
