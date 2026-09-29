@@ -17,7 +17,18 @@ package dailytemperatures
 // 遇到了第一个比它大的元素，而这个元素就是它右侧最近的更大值。
 func DailyTemperatures(temperatures []int) []int {
 	n := len(temperatures)
+
+	// ans: 定长结果数组，用 make([]int, n) → len=n, cap=n，n 个元素初始化为零值 0，
+	// 可直接按索引赋值 ans[top] = i - top。
+	// 【前端转 Go 学习点】Go 切片的 len（可见长度）与 cap（底层容量）分离：
+	// make([]int, n) ≈ JS 的 new Array(n).fill(0)（定长、有占位、可按下标写）。
 	ans := make([]int, n)
+
+	// stack: 动态栈，用 make([]int, 0, n) → len=0, cap=n，
+	// 只预分配底层数组、不占长度，必须用 append 追加（len=0 时按下标写会越界 panic）；
+	// 预分配容量可避免反复扩容时整体拷贝。
+	// 【前端转 Go 学习点】Go 把"分配空间"和"放入元素"分开，JS 无对应物——
+	// 这正是 len/cap 分离的核心，也是切片比数组灵活的原因。
 	stack := make([]int, 0, n) // 单调递减栈，存下标
 
 	for i, t := range temperatures {
