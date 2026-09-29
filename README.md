@@ -13,6 +13,7 @@
 | 栈 | 03 | 每日温度 | [stack-patterns/03-daily-temperatures](./stack-patterns/03-daily-temperatures) |
 | 栈 | 04 | 下一个更大元素 I | [stack-patterns/04-next-greater-element-i](./stack-patterns/04-next-greater-element-i) |
 | 栈 | 05 | 接雨水 | [stack-patterns/05-trapping-rain-water](./stack-patterns/05-trapping-rain-water) |
+| 栈 | 06 | 柱状图中最大的矩形 | [stack-patterns/06-largest-rectangle-in-histogram](./stack-patterns/06-largest-rectangle-in-histogram) |
 | 回溯 | 01 | 括号生成 | [backtracking-patterns/01-generate-parentheses](./backtracking-patterns/01-generate-parentheses) |
 
 > 模式索引见 [STACK-PATTERNS.md](./STACK-PATTERNS.md)。

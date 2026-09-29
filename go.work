@@ -7,4 +7,5 @@ use (
 	./stack-patterns/03-daily-temperatures
 	./stack-patterns/04-next-greater-element-i
 	./stack-patterns/05-trapping-rain-water
+	./stack-patterns/06-largest-rectangle-in-histogram
 )
