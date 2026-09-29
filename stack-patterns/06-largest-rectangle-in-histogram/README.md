@@ -84,3 +84,13 @@ func LargestRectangleArea(heights []int) int {
 ```bash
 cd stack-patterns/06-largest-rectangle-in-histogram && go test -v ./...
 ```
+
+## 配套演示
+
+交互式分步演示（浏览器双击打开）：[demo-largest-rectangle.html](./demo-largest-rectangle.html)
+
+- 完整走一遍经典用例 `[2,1,5,6,2,3]`（带哨兵）的 15 步结算过程；
+- 橙色矩形 = 弹出 `top` 时能撑出的最大矩形：左边界（新栈顶）和右边界（当前 `i`）都是**第一个更矮的柱子**，矩形被它们夹在中间；
+- 重点看第 12–14 步：尾哨兵 0 触发连续弹出，宽从 1 → 4 → 6 逐步展开，直观理解 `宽 = i − 左 − 1` 数的是"两边界之间能放下的柱子根数"。
+
+支持「上一步 / 下一步 / 播放 / 重置」。

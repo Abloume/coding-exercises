@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>柱状图最大矩形 · 单调递增栈结算演示</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f6f7f9; color: #1f2933; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 20px; }
+  h1 { text-align: center; font-size: 21px; color: #111827; margin: 6px 0 2px; }
+  .subtitle { text-align: center; font-size: 12px; color: #6b7280; margin-bottom: 12px; }
+  .cols { display: flex; flex-wrap: wrap; gap: 12px; }
+  .card { background: #fff; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .canvas-card { flex: 1 1 460px; min-width: 320px; }
+  .panel-card { flex: 1 1 320px; min-width: 260px; }
+  .case-title { font-size: 13px; font-weight: 700; color: #111827; }
+  .case-note { font-size: 12px; color: #9ca3af; margin: 4px 0 8px; }
+  svg { width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: #374151; margin-top: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .lg { display: inline-block; width: 12px; height: 12px; border-radius: 2px; }
+  .lg.red { border: 3px solid #e0533d; background: #fff; }
+  .lg.blue { border: 3px solid #2563eb; background: #fff; }
+  .lg.green { border: 3px solid #059669; background: #fff; }
+  .lg.rect { background: #f59e0b; opacity: .45; }
+  .panel-title { font-size: 13px; font-weight: 700; color: #111827; }
+  .step-label { font-size: 12px; color: #6b7280; margin: 4px 0 8px; }
+  .desc { font-size: 13px; color: #374151; line-height: 1.7; min-height: 76px; }
+  .box { background: #f3f4f6; border-radius: 8px; padding: 10px 12px; margin-top: 8px; font-size: 13px; line-height: 1.9; }
+  .mono { font-family: Menlo, Consolas, monospace; }
+  .calc { color: #d97706; font-weight: 700; font-family: Menlo, Consolas, monospace; }
+  .max { color: #059669; font-weight: 700; font-family: Menlo, Consolas, monospace; }
+  .width { color: #2563eb; font-family: Menlo, Consolas, monospace; font-size: 12px; min-height: 18px; }
+  .ctrls { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .ctrls button { flex: 1 1 70px; min-height: 44px; border: 1px solid #d1d5db; background: #fff; border-radius: 8px; font-size: 14px; cursor: pointer; }
+  .ctrls .play { flex: 1 1 90px; border: 1px solid #2563eb; background: #2563eb; color: #fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>柱状图中最大的矩形 · 单调递增栈结算演示</h1>
+  <div class="subtitle">面积 = 栈顶高 × (右边界 i − 左边界 − 1) ｜ 镜像对比：42 递减栈找凹槽，84 递增栈找柱子</div>
+
+  <div class="cols">
+    <div class="card canvas-card">
+      <div class="case-title">用例 [2,1,5,6,2,3]，哨兵 [0, 2,1,5,6,2,3, 0]</div>
+      <div class="case-note">头 0 保证栈非空，尾 0 保证全部弹出结算</div>
+      <svg id="board" viewBox="0 0 520 200"></svg>
+      <div class="legend">
+        <span><i class="lg red"></i>当前 i（右边界）</span>
+        <span><i class="lg blue"></i>被弹出 top（高）</span>
+        <span><i class="lg green"></i>左边界（新栈顶）</span>
+        <span><i class="lg rect"></i>结算矩形</span>
+      </div>
+    </div>
+
+    <div class="card panel-card">
+      <div class="panel-title">单调递增栈 · 弹出时结算</div>
+      <div class="step-label" id="stepLabel">步骤 0 / 15</div>
+      <div class="desc" id="desc">点击「下一步」开始。遇矮柱子 → 栈顶的右边界确定，弹出结算。</div>
+      <div class="box">
+        <div>栈（下标·高度）：<span class="mono" id="stackBox">[0(0)]</span></div>
+        <div>当前结算：<span class="calc" id="calcBox">—</span></div>
+        <div>最大面积 max：<span class="max" id="maxBox">0</span></div>
+        <div class="width" id="widthBox"></div>
+      </div>
+      <div class="ctrls">
+        <button id="prev">上一步</button>
+        <button id="next">下一步</button>
+        <button class="play" id="play">▶ 播放</button>
+        <button id="reset">重置</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var H = [0,2,1,5,6,2,3,0]; // 带哨兵
+  var STEPS = [
+    {i:0, desc:"i=0，哨兵 0 入栈（头 0：保证栈永不为空，每个柱子都有左边界）。", stack:"[0(0)]", max:0, top:null, left:null, rect:null, area:"", width:""},
+    {i:1, desc:"i=1，高 2 > 栈顶 0，不弹出，入栈 → 栈保持递增。", stack:"[0(0),1(2)]", max:0, top:null, left:null, rect:null, area:"", width:""},
+    {i:2, desc:"i=2，高 1 < 栈顶 1(2)：栈顶的【右边界】确定！弹出 top=1(高2)。", stack:"[0(0)]", max:0, top:1, left:0, rect:null, area:"高 = 2", width:""},
+    {i:2, desc:"左边界 = 新栈顶 0(0)。矩形范围：柱子 (0+1)..(2-1) 即第 1 根 → 宽 = 2−0−1 = 1。", stack:"[0(0)]", max:2, top:1, left:0, rect:{l:1,r:1,h:2}, area:"面积 = 2 × 1 = 2", width:"宽 = i−左−1 = 2−0−1 = 1（只有柱子1自己）"},
+    {i:2, desc:"栈顶 0(0) < 1，停止弹出；下标 2 入栈。", stack:"[0(0),2(1)]", max:2, top:null, left:null, rect:null, area:"", width:""},
+    {i:3, desc:"i=3，高 5：入栈。", stack:"[0(0),2(1),3(5)]", max:2, top:null, left:null, rect:null, area:"", width:""},
+    {i:4, desc:"i=4，高 6：入栈。", stack:"[0(0),2(1),3(5),4(6)]", max:2, top:null, left:null, rect:null, area:"", width:""},
+    {i:5, desc:"i=5，高 2 < 6：弹出 top=4(高6)，左边界=3(高5)。宽 = 5−3−1 = 1。", stack:"[0,2,3]", max:6, top:4, left:3, rect:{l:4,r:4,h:6}, area:"面积 = 6 × 1 = 6", width:"宽 = 5−3−1 = 1（只有柱子4自己）"},
+    {i:5, desc:"继续：高 2 < 5：弹出 top=3(高5)，左边界=2(高1)。宽 = 5−2−1 = 2。", stack:"[0,2]", max:10, top:3, left:2, rect:{l:3,r:4,h:5}, area:"面积 = 5 × 2 = 10 ← 新的 max", width:"宽 = 5−2−1 = 2（柱子3、4，延伸到 4 号柱）"},
+    {i:5, desc:"栈顶 2(1) < 2，停止弹出；下标 5 入栈。", stack:"[0(0),2(1),5(2)]", max:10, top:null, left:null, rect:null, area:"", width:""},
+    {i:6, desc:"i=6，高 3 > 2：入栈。", stack:"[0(0),2(1),5(2),6(3)]", max:10, top:null, left:null, rect:null, area:"", width:""},
+    {i:7, desc:"i=7，尾哨兵 0 < 3：弹出 top=6(高3)，左=5(高2)。宽 = 7−5−1 = 1。", stack:"[0,2,5]", max:10, top:6, left:5, rect:{l:6,r:6,h:3}, area:"面积 = 3 × 1 = 3", width:"宽 = 7−5−1 = 1"},
+    {i:7, desc:"继续：0 < 2：弹出 top=5(高2)，左=2(高1)。宽 = 7−2−1 = 4！", stack:"[0,2]", max:10, top:5, left:2, rect:{l:3,r:6,h:2}, area:"面积 = 2 × 4 = 8", width:"宽 = 7−2−1 = 4（柱子3、4、5、6，向两边延伸）"},
+    {i:7, desc:"继续：0 < 1：弹出 top=2(高1)，左=0(哨兵0)。宽 = 7−0−1 = 6。", stack:"[0]", max:10, top:2, left:0, rect:{l:1,r:6,h:1}, area:"面积 = 1 × 6 = 6", width:"宽 = 7−0−1 = 6（柱子1..6 全部覆盖）"},
+    {i:7, desc:"栈顶 0(0) == 0，停止。入栈。遍历结束：max = 10。", stack:"[0(0),7(0)]", max:10, top:null, left:null, rect:null, area:"", width:""}
+  ];
+
+  var svg = document.getElementById("board");
+  var step = 0, timer = null;
+  var OX = 20, GAP = 64, BW = 44, BASE = 180, UNIT = 26;
+
+  function render(){
+    var s = STEPS[step];
+    document.getElementById("stepLabel").textContent = "步骤 " + (step+1) + " / " + STEPS.length;
+    document.getElementById("desc").textContent = s.desc;
+    document.getElementById("stackBox").textContent = s.stack;
+    document.getElementById("calcBox").textContent = s.area || "—";
+    document.getElementById("maxBox").textContent = s.max;
+    document.getElementById("widthBox").textContent = s.width || "";
+
+    var ns = "http://www.w3.org/2000/svg";
+    svg.innerHTML = "";
+    for (var i = 0; i < H.length; i++){
+      var h = H[i];
+      var x = OX + i*GAP, y = BASE - h*UNIT;
+      var rect = document.createElementNS(ns,"rect");
+      rect.setAttribute("x", x); rect.setAttribute("y", y);
+      rect.setAttribute("width", BW); rect.setAttribute("height", Math.max(h*UNIT, 2));
+      rect.setAttribute("fill", (i===0 || i===H.length-1) ? "#e5e7eb" : "#374151");
+      if (s.top === i){ rect.setAttribute("stroke","#2563eb"); rect.setAttribute("stroke-width","3"); }
+      if (s.left === i){ rect.setAttribute("stroke","#059669"); rect.setAttribute("stroke-width","3"); }
+      if (s.cur === i){ rect.setAttribute("stroke","#e0533d"); rect.setAttribute("stroke-width","3"); }
+      svg.appendChild(rect);
+      var idx = document.createElementNS(ns,"text");
+      idx.setAttribute("x", x + BW/2); idx.setAttribute("y", BASE + 14);
+      idx.setAttribute("text-anchor","middle"); idx.setAttribute("font-size","11");
+      idx.setAttribute("fill", (i===0 || i===H.length-1) ? "#9ca3af" : "#6b7280");
+      idx.textContent = (i===0 || i===H.length-1) ? "i="+i+" 哨兵" : "i="+i;
+      svg.appendChild(idx);
+    }
+    if (s.rect){
+      var r = s.rect;
+      var xl = OX + r.l*GAP, xr = OX + r.r*GAP + BW;
+      var yt = BASE - r.h*UNIT;
+      var rr = document.createElementNS(ns,"rect");
+      rr.setAttribute("x", xl); rr.setAttribute("y", yt);
+      rr.setAttribute("width", xr-xl); rr.setAttribute("height", BASE-yt);
+      rr.setAttribute("fill", "#f59e0b"); rr.setAttribute("opacity","0.45");
+      svg.appendChild(rr);
+      var wt = document.createElementNS(ns,"text");
+      wt.setAttribute("x", (xl+xr)/2); wt.setAttribute("y", yt - 8);
+      wt.setAttribute("text-anchor","middle"); wt.setAttribute("font-size","13"); wt.setAttribute("fill","#d97706");
+      wt.setAttribute("font-weight","bold");
+      wt.textContent = "宽=" + (r.r - r.l + 1);
+      svg.appendChild(wt);
+    }
+  }
+
+  function setStep(n){
+    step = Math.max(0, Math.min(STEPS.length-1, n));
+    render();
+  }
+  document.getElementById("next").addEventListener("click", function(){ setStep(step+1); });
+  document.getElementById("prev").addEventListener("click", function(){ setStep(step-1); });
+  document.getElementById("reset").addEventListener("click", function(){ setStep(0); });
+  var playBtn = document.getElementById("play");
+  playBtn.addEventListener("click", function(){
+    if (timer){ clearInterval(timer); timer=null; playBtn.textContent="▶ 播放"; return; }
+    if (step >= STEPS.length-1) setStep(0);
+    playBtn.textContent="⏸ 暂停";
+    timer = setInterval(function(){
+      if (step >= STEPS.length-1){ clearInterval(timer); timer=null; playBtn.textContent="▶ 播放"; return; }
+      setStep(step+1);
+    }, 1500);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
