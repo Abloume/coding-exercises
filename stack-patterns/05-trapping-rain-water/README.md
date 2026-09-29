@@ -78,3 +78,12 @@ func Trap(height []int) int {
 ```bash
 cd stack-patterns/05-trapping-rain-water && go test -v ./...
 ```
+
+## 配套演示
+
+交互式分步演示（浏览器双击打开）：[demo-monotonic-stack.html](./demo-monotonic-stack.html)
+
+- 例1 `[2,1,3]`：左墙矮 → `min` 取**左边界**（水面被左墙限制）
+- 例2 `[3,1,2]`：右墙矮 → `min` 取**右边界**（水面被右墙限制）
+
+两个例子只对调左右墙高度，答案都是 1，但结算时水面取的墙不同——这正是 `min(左高, 右高)` 两个分支的真实场景。支持「下一步 / 播放 / 重置」控制节奏。
